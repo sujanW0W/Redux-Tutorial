@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost } from "./postsSlice";
+// import { createPost } from "./postsSlice";
 import { selectAllUsers } from "../users/usersSlice";
+import { addNewPost } from "./postsSlice";
 
 const CreatePost = () => {
     const dispatch = useDispatch();
@@ -9,6 +10,7 @@ const CreatePost = () => {
     const [postTitle, setPostTitle] = useState("");
     const [postContent, setPostContent] = useState("");
     const [postAuthorID, setPostAuthorID] = useState();
+    const [addRequestStatus, setAddRequestStatus] = useState("idle");
 
     const handlePostTitle = (e) => setPostTitle(e.target.value);
     const handlePostContent = (e) => setPostContent(e.target.value);
@@ -16,25 +18,38 @@ const CreatePost = () => {
 
     const allowSubmit = () => {
         return (
-            Boolean(postTitle) && Boolean(postContent) && Boolean(postAuthorID)
+            Boolean(postTitle) &&
+            Boolean(postContent) &&
+            Boolean(postAuthorID) &&
+            addRequestStatus === "idle"
         );
     };
 
-    const handleSubmit = () => {
-        if (postTitle && postContent) {
-            dispatch(
-                // createPost({
-                //     id: nanoid(),
-                //     title: postTitle,
-                //     content: postContent,
-                // })
-                //Here, we have customized payload on our own. But we can customize the payload in the reducers function in the "slice" file. By cutomizing the payload in the reducer function, the benefit we will get is that we will no longer need to cutomize the payload every time as reducer function will handle it. Check it out.
+    const handleSubmit = async () => {
+        try {
+            setAddRequestStatus("pending");
 
-                createPost(postTitle, postContent, postAuthorID)
-            );
+            if (postTitle && postContent) {
+                await dispatch(
+                    // createPost({
+                    //     id: nanoid(),
+                    //     title: postTitle,
+                    //     content: postContent,
+                    // })
+                    //Here, we have customized payload on our own. But we can customize the payload in the reducers function in the "slice" file. By cutomizing the payload in the reducer function, the benefit we will get is that we will no longer need to cutomize the payload every time as reducer function will handle it. Check it out.
 
-            setPostTitle("");
-            setPostContent("");
+                    // createPost(postTitle, postContent, postAuthorID)
+
+                    addNewPost({ postAuthorID, postTitle, postContent })
+                );
+
+                setPostTitle("");
+                setPostContent("");
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setAddRequestStatus("idle");
         }
     };
 
