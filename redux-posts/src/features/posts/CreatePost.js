@@ -1,0 +1,95 @@
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createPost } from "./postsSlice";
+import { selectAllUsers } from "../users/usersSlice";
+
+const CreatePost = () => {
+    const dispatch = useDispatch();
+
+    const [postTitle, setPostTitle] = useState("");
+    const [postContent, setPostContent] = useState("");
+    const [postAuthorID, setPostAuthorID] = useState();
+
+    const handlePostTitle = (e) => setPostTitle(e.target.value);
+    const handlePostContent = (e) => setPostContent(e.target.value);
+    const handlePostAuthor = (e) => setPostAuthorID(e.target.value);
+
+    const allowSubmit = () => {
+        return (
+            Boolean(postTitle) && Boolean(postContent) && Boolean(postAuthorID)
+        );
+    };
+
+    const handleSubmit = () => {
+        if (postTitle && postContent) {
+            dispatch(
+                // createPost({
+                //     id: nanoid(),
+                //     title: postTitle,
+                //     content: postContent,
+                // })
+                //Here, we have customized payload on our own. But we can customize the payload in the reducers function in the "slice" file. By cutomizing the payload in the reducer function, the benefit we will get is that we will no longer need to cutomize the payload every time as reducer function will handle it. Check it out.
+
+                createPost(postTitle, postContent, postAuthorID)
+            );
+
+            setPostTitle("");
+            setPostContent("");
+        }
+    };
+
+    const authors = useSelector(selectAllUsers);
+    const selectAuthor = authors.map((author) => {
+        return (
+            <option key={author.id} value={author.id}>
+                {author.name}
+            </option>
+        );
+    });
+
+    return (
+        <div className="createPostSection">
+            <h2>Create Post</h2>
+            <div className="inputLabel">
+                <label htmlFor="postTitle">Post Title: </label>
+                <input
+                    type="text"
+                    id="postTitle"
+                    name="postTitle"
+                    value={postTitle}
+                    onChange={handlePostTitle}
+                />
+            </div>
+            <div className="inputLabel">
+                <label htmlFor="postAuthor">Post Author: </label>
+                <select
+                    name="postAuthor"
+                    id="postAuthor"
+                    onChange={handlePostAuthor}
+                >
+                    <option value=""></option>
+                    {selectAuthor}
+                </select>
+            </div>
+            <div className="inputLabel">
+                <label htmlFor="postContent">Post Content: </label>
+                <textarea
+                    name="postContent"
+                    id="postContent"
+                    value={postContent}
+                    onChange={handlePostContent}
+                ></textarea>
+            </div>
+
+            <button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={!allowSubmit()}
+            >
+                Submit
+            </button>
+        </div>
+    );
+};
+
+export default CreatePost;

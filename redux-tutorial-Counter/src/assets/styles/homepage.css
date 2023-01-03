@@ -1,0 +1,73 @@
+.homeBody{
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+}
+
+h1{
+    margin-bottom: 50px;
+    font-size: 3rem;
+}
+
+.counterSection{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10vw;
+    padding: 20px 0px;
+}
+
+.counterBtn{
+    width: 5rem;
+    height: 5rem;
+    background-color: aliceblue;
+    font-size: 2.5rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+#counterValue{
+    font-size: 4rem;
+    margin: 0px;
+
+}
+
+.resetDiv{
+    padding: 20px;
+}
+
+.counterResetBtn{
+    width: 7rem;
+    height: 3rem;
+    background-color: aliceblue;
+    font-size: 2rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.changeByValue{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin: 30px 0px;
+}
+
+.changeByValueDiv{
+    padding: 10px;
+}
+
+.changeByValueDiv input{
+    font-size: 1.5rem;
+}
+
+.changeByValueBtn{
+    font-size: 1.5rem;
+    background-color: aliceblue;
+    width: 140px;
+}
+
+input::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+}
