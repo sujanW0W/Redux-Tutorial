@@ -6,6 +6,10 @@ import CreatePost from "./features/posts/CreatePost";
 import { SinglePagePost } from "./features/posts/SinglePagePost";
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
+import EditPost from "./features/posts/EditPost";
+
+import { UsersList } from "./features/users/UsersList";
+import { SingleUserPosts } from "./features/users/SingleUserPosts";
 
 const App = () => {
     return (
@@ -24,6 +28,11 @@ const App = () => {
                 <Route path="post">
                     <Route index element={<CreatePost />} />
                     <Route path=":postID" element={<SinglePagePost />} />
+                    <Route path="edit/:postID" element={<EditPost />} />
+                </Route>
+                <Route path="user">
+                    <Route index element={<UsersList />} />
+                    <Route path=":userId" element={<SingleUserPosts />} />
                 </Route>
             </Route>
         </Routes>

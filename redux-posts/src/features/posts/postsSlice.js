@@ -1,4 +1,9 @@
-import { createSlice, nanoid, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+    createSlice,
+    nanoid,
+    createAsyncThunk,
+    createSelector,
+} from "@reduxjs/toolkit";
 import { sub } from "date-fns";
 import axios from "axios";
 
@@ -37,6 +42,7 @@ const initialState = {
     posts: [],
     status: "idle", //idle || loading || succeeded || failed
     error: null,
+    count: 0,
 };
 
 const url = "https://jsonplaceholder.typicode.com/posts";
@@ -66,6 +72,28 @@ export const addNewPost = createAsyncThunk(
         return response.data;
     }
 );
+
+export const updatePost = createAsyncThunk(
+    "posts/updatePost",
+    async (editedPost) => {
+        try {
+            const response = await axios.put(
+                `${url}/${editedPost.id}`,
+                editedPost
+            );
+            return response.data;
+        } catch (error) {
+            // console.log(error);
+            return editedPost; //For testing Redux.
+        }
+    }
+);
+
+export const deletePost = createAsyncThunk("posts/deletePost", async (post) => {
+    const response = await axios.delete(`${url}/${post.id}`);
+    if (response.status === 200) return post;
+    return `${response?.status}: ${response?.statusText}`;
+});
 
 export const postsSlice = createSlice({
     name: "posts",
@@ -102,6 +130,10 @@ export const postsSlice = createSlice({
 
             if (existingPost) existingPost.reactions[reactionName]++;
         },
+
+        increaseCount: (state, action) => {
+            state.count += 1;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -120,7 +152,7 @@ export const postsSlice = createSlice({
                 const { postAuthorID, postTitle, postContent } = action.payload;
 
                 const formattedPost = {
-                    userId: postAuthorID,
+                    userId: Number(postAuthorID),
                     id: nanoid(),
                     title: postTitle,
                     body: postContent,
@@ -135,17 +167,50 @@ export const postsSlice = createSlice({
                 };
 
                 state.posts.push(formattedPost);
+            })
+            .addCase(updatePost.fulfilled, (state, action) => {
+                if (!action.payload?.id) {
+                    console.log("Update could not complete!");
+                    console.log(action.payload);
+                    return;
+                }
+
+                const { id } = action.payload;
+                action.payload.date = new Date().toISOString();
+                const otherPosts = state.posts.filter((post) => post.id !== id);
+                state.posts = [...otherPosts, action.payload];
+            })
+            .addCase(deletePost.fulfilled, (state, action) => {
+                if (!action.payload?.id) {
+                    console.log("Delete could not complete!");
+                    console.log(action.payload);
+                    return;
+                }
+                const { id } = action.payload;
+                const otherPosts = state.posts.filter((post) => post.id !== id);
+                state.posts = [...otherPosts];
             });
     },
 });
 
-export const { createPost, addReaction } = postsSlice.actions;
+export const { createPost, addReaction, increaseCount } = postsSlice.actions;
 
 export const selectAllPosts = (state) => state.posts.posts;
 export const getPostStatus = (state) => state.posts.status;
 export const getPostError = (state) => state.posts.error;
+export const getCount = (state) => state.posts.count;
 
 export const getSinglePostByID = (state, postID) =>
-    state.posts.posts.find((post) => postID === post.id);
+    state.posts.posts.find((post) => postID === post.id.toString());
+
+// export const getPostByUserId = (state, userId) =>
+//     state.posts.posts.filter((post) => post.userId === Number(userId));
+//this filter is executed in every render of the header. This is because, the page has to figure out the filterate every time. The solution to this is to use createSelector.
+
+//createSelector will only get executed when its input changes.
+export const getPostByUserId = createSelector(
+    [selectAllPosts, (state, userId) => userId],
+    (posts, userId) => posts.filter((post) => post.userId === userId)
+);
 
 export default postsSlice.reducer;

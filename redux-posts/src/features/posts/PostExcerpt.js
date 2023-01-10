@@ -19,4 +19,8 @@ const PostExcerpt = ({ post }) => {
     );
 };
 
+//export default React.memo(PostExcerpt);
+//This is one way of preventing unwanted re-rendering. Basically, memo() skips the rendering if its props have not changed.
+//There is better solution to this- State Normalization
+
 export default PostExcerpt;

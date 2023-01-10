@@ -18,6 +18,8 @@ const PostsList = () => {
     const postStatus = useSelector(getPostStatus);
     const postError = useSelector(getPostError);
 
+    //The posts have been fetched in index.js, i.e. fetched when the application loads. So, it is not required to fetch here.
+
     useEffect(() => {
         if (postStatus === "idle") {
             dispatch(fetchPosts());

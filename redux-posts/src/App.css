@@ -101,3 +101,39 @@ a{
     text-decoration: none;
     color: inherit;
 }
+
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #ECE8DD;
+}
+
+ul{
+    list-style-type: none;
+    display: flex;
+    gap: 20px;
+    padding: 0px 20px;
+}
+
+li{
+    font-size: 2rem;
+}
+
+#editPostLink{
+    margin: 0;
+    padding: 5px;
+    text-decoration: underline;
+}
+
+.usersSection{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.usersList{
+    display: flex;
+    flex-direction: column;
+}
