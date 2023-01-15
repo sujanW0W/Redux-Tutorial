@@ -5,7 +5,11 @@ import PostReactions from "./PostReactions";
 
 import { Link } from "react-router-dom";
 
-const PostExcerpt = ({ post }) => {
+import { useSelector } from "react-redux";
+import { getSinglePostByID } from "./postsSlice";
+
+const PostExcerpt = ({ postId }) => {
+    const post = useSelector((state) => getSinglePostByID(state, postId));
     return (
         <article className="postArticle">
             <Link to={`post/${post.id}`}>
