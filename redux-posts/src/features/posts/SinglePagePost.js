@@ -6,6 +6,8 @@ import PostReactions from "./PostReactions";
 import { useSelector, useDispatch } from "react-redux";
 import { getSinglePostByID, deletePost } from "./postsSlice";
 
+import { useDeletePostMutation } from "./postsSlice";
+
 import { useParams, Link, useNavigate } from "react-router-dom";
 
 export const SinglePagePost = () => {
@@ -13,8 +15,10 @@ export const SinglePagePost = () => {
     const { postID } = useParams();
     const post = useSelector((state) => getSinglePostByID(state, postID));
 
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const [deletePost] = useDeletePostMutation();
 
     if (!post) {
         return (
@@ -25,7 +29,8 @@ export const SinglePagePost = () => {
     }
 
     const handleDeletePost = async () => {
-        await dispatch(deletePost({ id: post.id }));
+        // await dispatch(deletePost({ id: post.id }));
+        await deletePost({ id: post.id });
         navigate("/");
     };
 

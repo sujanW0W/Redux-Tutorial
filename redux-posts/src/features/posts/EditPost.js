@@ -5,8 +5,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { selectAllUsers } from "../users/usersSlice";
 import { getSinglePostByID, updatePost } from "../posts/postsSlice";
 
+import { useUpdatePostMutation } from "../posts/postsSlice";
+
 const EditPost = () => {
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
+
+    const [updatePost, { isLoading }] = useUpdatePostMutation();
 
     const { postID } = useParams();
     const navigate = useNavigate();
@@ -17,7 +21,7 @@ const EditPost = () => {
     const [postTitle, setPostTitle] = useState(post?.title);
     const [postUserId, setPostUserId] = useState(post?.userId);
     const [postContent, setPostContent] = useState(post?.body);
-    const [requestStatus, setRequestStatus] = useState("idle");
+    // const [requestStatus, setRequestStatus] = useState("idle");
 
     const handlePostTitle = (e) => setPostTitle(e.target.value);
     const handlePostAuthor = (e) => setPostUserId(e.target.value);
@@ -36,7 +40,8 @@ const EditPost = () => {
             Boolean(postTitle) &&
             Boolean(postUserId) &&
             Boolean(postContent) &&
-            requestStatus === "idle"
+            // requestStatus === "idle"
+            !isLoading
         );
     };
 
@@ -50,16 +55,24 @@ const EditPost = () => {
 
     const handleSubmit = async () => {
         try {
-            setRequestStatus("pending");
-            await dispatch(
-                updatePost({
-                    id: post.id,
-                    userId: postUserId,
-                    title: postTitle,
-                    body: postContent,
-                    reactions: post.reactions,
-                })
-            );
+            // setRequestStatus("pending");
+            // await dispatch(
+            //     updatePost({
+            //         id: post.id,
+            //         userId: postUserId,
+            //         title: postTitle,
+            //         body: postContent,
+            //         reactions: post.reactions,
+            //     })
+            // );
+
+            await updatePost({
+                id: post.id,
+                userId: postUserId,
+                title: postTitle,
+                body: postContent,
+                reactions: post.reactions,
+            });
 
             setPostTitle("");
             setPostContent("");
@@ -67,9 +80,10 @@ const EditPost = () => {
             navigate(`/post/${postID}`);
         } catch (error) {
             console.log(error);
-        } finally {
-            setRequestStatus("idle");
         }
+        //  finally {
+        //     setRequestStatus("idle");
+        // }
     };
 
     return (

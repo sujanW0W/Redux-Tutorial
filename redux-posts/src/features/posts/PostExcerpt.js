@@ -18,7 +18,7 @@ const PostExcerpt = ({ postId }) => {
             </Link>
             <PostAuthor authorID={post.userId} />
             <TimeAgo timestamp={post.date} />
-            <PostReactions postID={post.id} reactions={post.reactions} />
+            <PostReactions postId={post.id} reactions={post.reactions} />
         </article>
     );
 };

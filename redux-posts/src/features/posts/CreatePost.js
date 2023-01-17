@@ -3,16 +3,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // import { createPost } from "./postsSlice";
 import { selectAllUsers } from "../users/usersSlice";
-import { addNewPost } from "./postsSlice";
+// import { addNewPost } from "./postsSlice";
+
+import { useAddNewPostMutation } from "./postsSlice";
 
 const CreatePost = () => {
-    const dispatch = useDispatch();
+    const [addNewPost, { isLoading }] = useAddNewPostMutation();
+
+    // const dispatch = useDispatch(); For RTK
     const navigate = useNavigate();
 
     const [postTitle, setPostTitle] = useState("");
     const [postContent, setPostContent] = useState("");
     const [postAuthorID, setPostAuthorID] = useState();
-    const [addRequestStatus, setAddRequestStatus] = useState("idle");
+    // const [addRequestStatus, setAddRequestStatus] = useState("idle");
 
     const handlePostTitle = (e) => setPostTitle(e.target.value);
     const handlePostContent = (e) => setPostContent(e.target.value);
@@ -23,16 +27,17 @@ const CreatePost = () => {
             Boolean(postTitle) &&
             Boolean(postContent) &&
             Boolean(postAuthorID) &&
-            addRequestStatus === "idle"
+            // addRequestStatus === "idle"
+            !isLoading
         );
     };
 
     const handleSubmit = async () => {
         try {
-            setAddRequestStatus("pending");
+            // setAddRequestStatus("pending");
 
             if (postTitle && postContent) {
-                await dispatch(
+                /* await dispatch(
                     // createPost({
                     //     id: nanoid(),
                     //     title: postTitle,
@@ -43,7 +48,13 @@ const CreatePost = () => {
                     // createPost(postTitle, postContent, postAuthorID)
 
                     addNewPost({ postAuthorID, postTitle, postContent })
-                );
+                ); */
+
+                await addNewPost({
+                    userId: postAuthorID,
+                    title: postTitle,
+                    body: postContent,
+                });
 
                 setPostTitle("");
                 setPostContent("");
@@ -51,9 +62,10 @@ const CreatePost = () => {
             }
         } catch (error) {
             console.log(error);
-        } finally {
-            setAddRequestStatus("idle");
         }
+        //finally {
+        //     setAddRequestStatus("idle");
+        // }
     };
 
     const authors = useSelector(selectAllUsers);

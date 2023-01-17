@@ -2,12 +2,14 @@ import { useSelector, useDispatch } from "react-redux";
 import {
     // selectAllPosts,
     selectPostIds,
-    getPostStatus,
-    getPostError,
+    // getPostStatus,
+    // getPostError,
     fetchPosts,
 } from "./postsSlice";
 
-import { useEffect } from "react";
+import { useGetPostsQuery } from "./postsSlice";
+
+// import { useEffect } from "react";
 import PostExcerpt from "./PostExcerpt";
 
 const PostsList = () => {
@@ -16,28 +18,39 @@ const PostsList = () => {
 
     const dispatch = useDispatch();
     // const posts = useSelector(selectAllPosts);
+
+    const { isLoading, isSuccess, isError, error } = useGetPostsQuery();
+
     const orderedPostIds = useSelector(selectPostIds);
-    const postStatus = useSelector(getPostStatus);
-    const postError = useSelector(getPostError);
+    // const postStatus = useSelector(getPostStatus);
+    // const postError = useSelector(getPostError);
 
     //The posts have been fetched in index.js, i.e. fetched when the application loads. So, it is not required to fetch here.
 
-    useEffect(() => {
-        if (postStatus === "idle") {
-            dispatch(fetchPosts());
-        }
-    }, [postStatus, dispatch]);
+    // useEffect(() => {
+    //     if (postStatus === "idle") {
+    //         dispatch(fetchPosts());
+    //     }
+    // }, [postStatus, dispatch]);
+
+    // let content;
+    // if (postStatus === "Loading") {
+    //     content = <div>Loading...</div>;
+    // } else if (postStatus === "Succeeded") {
+    //     content = orderedPostIds.map((postId) => {
+    //         return <PostExcerpt key={postId} postId={postId} />;
+    //     });
+    // } else if (postStatus === "Failed") {
+    //     content = <div>{postError}</div>;
+    // }
 
     let content;
-    if (postStatus === "Loading") {
-        content = <div>Loading...</div>;
-    } else if (postStatus === "Succeeded") {
+    if (isLoading) content = <div>Loading...</div>;
+    else if (isSuccess) {
         content = orderedPostIds.map((postId) => {
             return <PostExcerpt key={postId} postId={postId} />;
         });
-    } else if (postStatus === "Failed") {
-        content = <div>{postError}</div>;
-    }
+    } else if (isError) content = <div>{error}</div>;
 
     return (
         <div className="postsSection">
